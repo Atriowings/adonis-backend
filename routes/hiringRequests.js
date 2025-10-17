@@ -60,7 +60,7 @@ router.post('/', async (req, res) => {
     res.status(200).json({
       status_code: 200,
       message: "Sent mail successfully",
-      data: { newReq },
+      data:newReq,
     });
      }
      catch (err) {

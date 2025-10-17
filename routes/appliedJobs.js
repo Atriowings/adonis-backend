@@ -32,8 +32,7 @@ router.post('/', async (req, res) => {
 
     // Email content
     const mailOptions = {
-      from: email,                            // shows user's email as sender
-      replyTo: email,                         // allows admin to reply directly
+      from: process.env.SMTP_USER,                     // allows admin to reply directly
       to: process.env.RECEIVER_EMAIL,            // admin’s email
       subject: `New Job Application from ${name}`,
       html: `
@@ -45,16 +44,26 @@ router.post('/', async (req, res) => {
       `,
     };
 
-    // Send the email
-    await transporter.sendMail(mailOptions);
+   try {
+     await transporter.sendMail(mailOptions);
+     console.log("Email sent successfully to", email);
+    } catch (emailErr) {
+    console.error("Email sending failed:", emailErr.message);
+    }
 
-    res.json({
-      message: 'Job application submitted and email sent successfully',
-      data: newReq,
+    res.status(200).json({
+      status_code: 200,
+      message: "Sent mail successfully",
+      data:newReq,
     });
-  } catch (err) {
-    console.error('Error:', err);
-    res.status(500).json({ message: err.message });
+     }
+     catch (err) {
+    console.error("Registration error:", err);
+    res.status(500).json({
+      status_code: 500,
+      message: "Server error during sending mail",
+      error: err.message
+    });
   }
 });
 

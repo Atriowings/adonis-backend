@@ -11,6 +11,7 @@ connectDB(process.env.MONGODB_URI);
 // app.use(cors());
 app.use(cors({
   origin: 'https://adonis.appowise.in',
+  // origin: 'http://localhost:5173',
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   credentials: true
 }));

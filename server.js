@@ -10,7 +10,10 @@ connectDB(process.env.MONGODB_URI);
 
 // app.use(cors());
 app.use(cors({
-  origin: 'https://adonis.appowise.in',
+  origin: [
+      'https://adonis.appowise.in',
+      'http://localhost:5173'
+    ];
   // origin: 'http://localhost:5173',
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   credentials: true
@@ -29,3 +32,4 @@ app.use("/api/appliedJobs", appliedJobRoutes);
 app.get('/', (req, res) => res.send('Job board backend running'));
 
 app.listen(PORT, () => console.log(`Server started on ${PORT}`));
+

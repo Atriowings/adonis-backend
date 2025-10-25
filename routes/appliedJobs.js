@@ -6,14 +6,6 @@ const nodemailer = require('nodemailer');
 
 // Create (public form submission)
 router.post('/', async (req, res) => {
-  // try {
-  //   const { name, email, mobile, message } = req.body;
-  //   const newReq = new AppliedJob({ name, email, mobile, message });
-  //   await newReq.save();
-  //   res.json(newReq);
-  // } catch (err) {
-  //   res.status(500).json({ message: err.message });
-  // }
   try {
     const { name, email, mobile, message } = req.body;
 
@@ -25,47 +17,79 @@ router.post('/', async (req, res) => {
     const transporter = nodemailer.createTransport({
       service: 'gmail', // or your preferred service
       auth: {
-        user: process.env.SMTP_USER,          // admin email
-        pass: process.env.SMTP_PASS, // app-specific password
+        user: process.env.SMTP_USER,   // admin email
+        pass: process.env.SMTP_PASS,   // app-specific password
       },
     });
 
     // Email content
     const mailOptions = {
-      from: process.env.SMTP_USER,                     // allows admin to reply directly
-      to: process.env.RECEIVER_EMAIL,            // admin’s email
+      from: email, // allows admin to reply directly
+      to: process.env.RECEIVER_EMAIL, // admin’s email
       subject: `New Job Application from ${name}`,
       html: `
-        <h2>New Job Application Received</h2>
-        <p><strong>Name:</strong> ${name}</p>
-        <p><strong>Email:</strong> ${email}</p>
-        <p><strong>Mobile:</strong> ${mobile}</p>
-        <p><strong>Message:</strong><br/>${message}</p>
+        <div style="font-family: 'Segoe UI', Arial, sans-serif; background-color: #f4f4f7; padding: 30px;">
+          <div style="max-width: 600px; margin: auto; background-color: #ffffff; border-radius: 8px; box-shadow: 0 2px 6px rgba(0,0,0,0.1); overflow: hidden;">
+            <div style="background-color: #0078D7; color: white; padding: 20px 30px; text-align: center;">
+              <h2 style="margin: 0;">New Job Application Received</h2>
+            </div>
+
+            <div style="padding: 25px 30px; color: #333333;">
+              <p style="font-size: 16px;">Hello Admin,</p>
+              <p style="font-size: 15px;">You’ve received a new job application with the following details:</p>
+
+              <table style="width: 100%; border-collapse: collapse; margin-top: 15px;">
+                <tr>
+                  <td style="padding: 8px 0; width: 120px; font-weight: bold;">Name:</td>
+                  <td style="padding: 8px 0;">${name}</td>
+                </tr>
+                <tr>
+                  <td style="padding: 8px 0; font-weight: bold;">Email:</td>
+                  <td style="padding: 8px 0;">${email}</td>
+                </tr>
+                <tr>
+                  <td style="padding: 8px 0; font-weight: bold;">Mobile:</td>
+                  <td style="padding: 8px 0;">${mobile}</td>
+                </tr>
+                <tr>
+                  <td style="padding: 8px 0; vertical-align: top; font-weight: bold;">Message:</td>
+                  <td style="padding: 8px 0;">${message}</td>
+                </tr>
+              </table>
+
+              <p style="margin-top: 30px; font-size: 14px; color: #555;">Best regards,<br>
+              <strong>Your Website Team</strong></p>
+            </div>
+
+            <div style="background-color: #f0f0f0; padding: 15px 30px; text-align: center; font-size: 13px; color: #777;">
+              © ${new Date().getFullYear()} Your Company. All rights reserved.
+            </div>
+          </div>
+        </div>
       `,
     };
 
-   try {
-     await transporter.sendMail(mailOptions);
-     console.log("Email sent successfully to", email);
-    } catch (emailErr) {
-    console.error("Email sending failed:", emailErr.message);
-    }
+    // Send email
+    await transporter.sendMail(mailOptions);
 
+    // Success response
     res.status(200).json({
       status_code: 200,
-      message: "Sent mail successfully",
-      data:newReq,
+      message: "Mail sent successfully",
+      data: newReq,
     });
-     }
-     catch (err) {
-    console.error("Registration error:", err);
+
+  } catch (err) {
+    // console.error("Error occurred:", err.message);
     res.status(500).json({
       status_code: 500,
       message: "Server error during sending mail",
-      error: err.message
+      error: err.message,
     });
   }
 });
+
+
 
 // Get all (admin only)
 router.get('/', async (req, res) => {

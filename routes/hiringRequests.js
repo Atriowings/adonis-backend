@@ -7,14 +7,6 @@ const verifyToken = require('../middleware/auth'); // same as jobs
 
 // Create (public form submission)
 router.post('/', async (req, res) => {
-//   try {
-//     const { companyName, name, mobile, designation, email } = req.body;
-//     const newReq = new HiringRequest({ companyName, name, mobile, designation, email });
-//     await newReq.save();
-//     res.json(newReq);
-//   } catch (err) {
-//     res.status(500).json({ message: err.message });
-//   }
   try {
     const { companyName, name, mobile, designation, email } = req.body;
 
@@ -22,68 +14,89 @@ router.post('/', async (req, res) => {
     const newReq = new HiringRequest({ companyName, name, mobile, designation, email });
     await newReq.save();
 
-    // Create a transporter (your admin account will actually send the mail)
+    // Create email transporter
     const transporter = nodemailer.createTransport({
       service: 'gmail',
       auth: {
-        user: process.env.SMTP_USER,          // admin Gmail address
-        pass: process.env.SMTP_PASS, // app-specific password
+        user: process.env.SMTP_USER,   // admin Gmail
+        pass: process.env.SMTP_PASS,   // app-specific password
       },
     });
 
-    // Mail details
+    // Styled email content
     const mailOptions = {
-      from:process.env.SMTP_USER,
-      // from: email,                             // shows user's email as sender
-      // replyTo: email,                          // admin can reply directly to user
-      to: process.env.RECEIVER_EMAIL,             // admin's inbox
+      from: email,                        // shows user's email as sender
+      replyTo: email,                     // admin can reply directly to user
+      to: process.env.RECEIVER_EMAIL,     // admin’s inbox
       subject: `New Hiring Request from ${companyName}`,
       html: `
-        <h2>New Hiring Request</h2>
-        <p><strong>Company Name:</strong> ${companyName}</p>
-        <p><strong>Name:</strong> ${name}</p>
-        <p><strong>Mobile:</strong> ${mobile}</p>
-        <p><strong>Designation:</strong> ${designation}</p>
-        <p><strong>Email:</strong> ${email}</p>
+        <div style="font-family: 'Segoe UI', Arial, sans-serif; background-color: #f4f4f7; padding: 30px;">
+          <div style="max-width: 600px; margin: auto; background-color: #ffffff; border-radius: 8px; box-shadow: 0 2px 6px rgba(0,0,0,0.1); overflow: hidden;">
+            
+            <!-- Header -->
+            <div style="background-color: #0078D7; color: white; padding: 20px 30px; text-align: center;">
+              <h2 style="margin: 0;">New Hiring Request</h2>
+            </div>
+
+            <!-- Body -->
+            <div style="padding: 25px 30px; color: #333;">
+              <p style="font-size: 16px;">Hello Admin,</p>
+              <p style="font-size: 15px;">A new hiring request has been submitted with the following details:</p>
+
+              <table style="width: 100%; border-collapse: collapse; margin-top: 15px;">
+                <tr>
+                  <td style="padding: 8px 0; width: 160px; font-weight: bold;">Company Name:</td>
+                  <td style="padding: 8px 0;">${companyName}</td>
+                </tr>
+                <tr>
+                  <td style="padding: 8px 0; font-weight: bold;">Name:</td>
+                  <td style="padding: 8px 0;">${name}</td>
+                </tr>
+                <tr>
+                  <td style="padding: 8px 0; font-weight: bold;">Mobile:</td>
+                  <td style="padding: 8px 0;">${mobile}</td>
+                </tr>
+                <tr>
+                  <td style="padding: 8px 0; font-weight: bold;">Designation:</td>
+                  <td style="padding: 8px 0;">${designation}</td>
+                </tr>
+                <tr>
+                  <td style="padding: 8px 0; font-weight: bold;">Email:</td>
+                  <td style="padding: 8px 0;">${email}</td>
+                </tr>
+              </table>
+
+              <p style="margin-top: 30px; font-size: 14px; color: #555;">
+                Best regards,<br>
+                <strong>Your Website Team</strong>
+              </p>
+            </div>
+
+            <!-- Footer -->
+            <div style="background-color: #f0f0f0; padding: 15px 30px; text-align: center; font-size: 13px; color: #777;">
+              © ${new Date().getFullYear()} Your Company. All rights reserved.
+            </div>
+          </div>
+        </div>
       `,
     };
 
-   
- 
-   try {
-     await transporter.sendMail(mailOptions);
-     console.log("Email sent successfully to", email);
-    } catch (emailErr) {
-    console.error("Email sending failed:", emailErr.message);
-    }
-
+    // Attempt to send email
+    await transporter.sendMail(mailOptions);
     res.status(200).json({
       status_code: 200,
-      message: "Sent mail successfully",
-      data:newReq,
+      message: "Request saved and email processed successfully",
+      data: newReq,
     });
-     }
-     catch (err) {
-    console.error("Registration error:", err);
+
+  } catch (err) {
     res.status(500).json({
       status_code: 500,
-      message: "Server error during sending mail",
-      error: err.message
+      message: "Server error during hiring request submission",
+      error: err.message,
     });
   }
-   
 });
-// Send email
-  //   await transporter.sendMail(mailOptions);
-
-  //   res.json({
-  //     message: 'Hiring request submitted successfully and email sent to admin',
-  //     data: newReq,
-  //   });catch (err) {
-  //   console.error('Error:', err);
-  //   res.status(500).json({ message: err.message });
-  // }
-
 
 
 // Get all (admin only)

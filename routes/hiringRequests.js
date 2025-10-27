@@ -25,7 +25,7 @@ router.post('/', async (req, res) => {
 
     // Styled email content
     const mailOptions = {
-      from: email,                        // shows user's email as sender
+      from: process.env.SMTP_USER,                        // shows user's email as sender
       replyTo: email,                     // admin can reply directly to user
       to: process.env.RECEIVER_EMAIL,     // admin’s inbox
       subject: `New Hiring Request from ${companyName}`,

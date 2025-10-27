@@ -90,6 +90,7 @@ router.post('/', async (req, res) => {
     });
 
   } catch (err) {
+    console.error("Error in /api/hiringRequest:", err);
     res.status(500).json({
       status_code: 500,
       message: "Server error during hiring request submission",

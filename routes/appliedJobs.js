@@ -82,6 +82,7 @@ router.post('/', async (req, res) => {
     });
 
   } catch (err) {
+    console.error("Error in /api/appliedJobs:", err);
     // console.error("Error occurred:", err.message);
     res.status(500).json({
       status_code: 500,

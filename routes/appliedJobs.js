@@ -25,6 +25,7 @@ router.post('/', async (req, res) => {
     // Email content
     const mailOptions = {
       from: email, // allows admin to reply directly
+      replyTo: email, 
       to: process.env.RECEIVER_EMAIL, // admin’s email
       subject: `New Job Application from ${name}`,
       html: `

@@ -14,13 +14,24 @@ router.post('/', async (req, res) => {
     await newReq.save();
 
     // Set up email transport
+    // const transporter = nodemailer.createTransport({
+    //   service: 'gmail', // or your preferred service
+    //   auth: {
+    //     user: process.env.SMTP_USER,   // admin email
+    //     pass: process.env.SMTP_PASS,   // app-specific password
+    //   },
+    // });
     const transporter = nodemailer.createTransport({
-      service: 'gmail', // or your preferred service
-      auth: {
-        user: process.env.SMTP_USER,   // admin email
-        pass: process.env.SMTP_PASS,   // app-specific password
-      },
-    });
+  host: process.env.SMTP_HOST,
+  port: 465,
+  secure: true,
+  auth: {
+    user: process.env.SMTP_USER,
+    pass: process.env.SMTP_PASS,
+  },
+  tls: { rejectUnauthorized: false },
+  pool: true,
+});
 
     // Email content
     const mailOptions = {

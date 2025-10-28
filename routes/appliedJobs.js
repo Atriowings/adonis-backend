@@ -31,7 +31,9 @@ router.post('/', async (req, res) => {
   },
   tls: {
       rejectUnauthorized: false // DANGER: USE FOR DEBUGGING ONLY!
-  }
+  },
+  socketTimeout: 60000, // 5 minutes (300,000 ms). Default is usually 1 minute (60000 ms).
+  connectionTimeout: 60000 // Also set connection timeout
 });
     
 

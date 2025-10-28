@@ -24,15 +24,14 @@ router.post('/', async (req, res) => {
     // });
     const transporter = nodemailer.createTransport({
   host: process.env.SMTP_HOST || 'smtp.gmail.com',
-  port: process.env.SMTP_PORT || 587,
-  secure: process.env.SMTP_SECURE === 'false', // This will be 'false' now
+  port: parseInt(process.env.SMTP_PORT || '465', 10),
+  secure: process.env.SMTP_SECURE === 'true',
   auth: {
     user: process.env.SMTP_USER,
     pass: process.env.SMTP_PASS,
   },
-  requireTLS: process.env.SMTP_PORT === '587' ? true : false, // Add this
   tls: {
-      // rejectUnauthorized: false // Consider if still issues, but try without first
+      rejectUnauthorized: false // DANGER: USE FOR DEBUGGING ONLY!
   }
 });
 

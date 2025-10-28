@@ -15,13 +15,26 @@ router.post('/', async (req, res) => {
     await newReq.save();
 
     // Create email transporter
+    // const transporter = nodemailer.createTransport({
+    //   service: 'gmail',
+    //   auth: {
+    //     user: process.env.SMTP_USER,   
+    //     pass: process.env.SMTP_PASS, 
+    //   },
+    // });
     const transporter = nodemailer.createTransport({
-      service: 'gmail',
-      auth: {
-        user: process.env.SMTP_USER,   // admin Gmail
-        pass: process.env.SMTP_PASS,   // app-specific password
-      },
-    });
+  host: process.env.SMTP_HOST || 'smtp.gmail.com',
+  port: process.env.SMTP_PORT || 587,
+  secure: process.env.SMTP_SECURE === 'true', // This will be 'false' now
+  auth: {
+    user: process.env.SMTP_USER,
+    pass: process.env.SMTP_PASS,
+  },
+  requireTLS: process.env.SMTP_PORT === '587' ? true : false, // Add this
+  tls: {
+      // rejectUnauthorized: false // Consider if still issues, but try without first
+  }
+});
 
     // Styled email content
     const mailOptions = {

@@ -23,20 +23,16 @@ router.post('/', async (req, res) => {
     //   },
     // });
     const transporter = nodemailer.createTransport({
-  host: process.env.SMTP_HOST || 'smtp.gmail.com',
-  port: parseInt(process.env.SMTP_PORT || '465', 10),
-  secure: process.env.SMTP_SECURE === 'true',
-  auth: {
-    user: process.env.SMTP_USER,
-    pass: process.env.SMTP_PASS,
-  },
-  tls: {
-      rejectUnauthorized: false // DANGER: USE FOR DEBUGGING ONLY!
-  },
-  socketTimeout: 60000, // 5 minutes (300,000 ms). Default is usually 1 minute (60000 ms).
+    host: process.env.SMTP_HOST,
+    port: process.env.SMTP_PORT,
+    secure: process.env.SMTP_SECURE,
+    auth: {
+        user: process.env.SMTP_USER,
+        pass: process.env.SMTP_PASS,
+    },
+    socketTimeout: 60000, // 5 minutes (300,000 ms). Default is usually 1 minute (60000 ms).
   connectionTimeout: 60000 // Also set connection timeout
 });
-
     // Styled email content
     const mailOptions = {
       from: process.env.SMTP_USER,                        // shows user's email as sender

@@ -24,7 +24,7 @@ router.post('/', async (req, res) => {
      const transporter = nodemailer.createTransport({
       host: process.env.SMTP_HOST || 'smtp.gmail.com',
       port: process.env.SMTP_PORT || 587,
-      secure: process.env.SMTP_SECURE === 'true', // This will be 'false' now
+      secure: process.env.SMTP_SECURE === 'false', // This will be 'false' now
       auth: {
         user: process.env.SMTP_USER,
         pass: process.env.SMTP_PASS,
@@ -95,14 +95,28 @@ router.post('/', async (req, res) => {
     });
 
   } catch (err) {
-    console.error("Error in /api/appliedJobs:", err);
-    // console.error("Error occurred:", err.message);
-    res.status(500).json({
-      status_code: 500,
-      message: "Server error during sending mail",
-      error: err.message,
-    });
+  console.error("Error in /api/appliedJobs:", err);
+  console.error("Nodemailer error message:", err.message);
+  console.error("Nodemailer error code:", err.code);
+  console.error("Nodemailer error command:", err.command);
+  console.error("Nodemailer error response:", err.response);
+
+  if (err.responseCode) {
+    console.error("Nodemailer response code:", err.responseCode);
   }
+
+  res.status(500).json({
+    status_code: 500,
+    message: "Server error during sending mail",
+    error: err.message,
+    detailedError: { // For debugging: REMOVE IN PRODUCTION
+        code: err.code,
+        command: err.command,
+        response: err.response,
+        responseCode: err.responseCode
+    }
+  });
+}
 });
 
 

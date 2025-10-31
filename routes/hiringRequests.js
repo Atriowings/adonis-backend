@@ -4,7 +4,7 @@ const router = express.Router();
 const HiringRequest = require('../models/HiringRequest');
 const nodemailer = require('nodemailer');
 const verifyToken = require('../middleware/auth'); // same as jobs
-import { Resend } from "resend";
+const { Resend } = require('resend');
 const resend = new Resend(process.env.RESEND_API_KEY); // set this in Railway variables
 
 // Create (public form submission)
